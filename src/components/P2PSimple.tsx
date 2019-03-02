@@ -31,12 +31,12 @@ const peerConnectionConfig = {
 };
 
 class P2PSimple extends React.Component<P2PSimpleProps, P2PSimpleState> {
+  state = initialState;
   private localVideoRef = React.createRef<HTMLVideoElement>();
   private remoteVideoRef = React.createRef<HTMLVideoElement>();
 
   constructor(props: P2PSimpleProps) {
     super(props);
-    this.state = initialState;
     this.localVideoRef = React.createRef();
     this.remoteVideoRef = React.createRef();
   }
