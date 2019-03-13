@@ -1,28 +1,26 @@
-import * as React from 'react';
+import React, { useState, useRef, useLayoutEffect, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { randomString } from '../utils';
+
 export interface P2PSimpleProps {
-  title: string;
+  localStream: MediaStream | null;
+  onStartRemoteStream: (stream: MediaStream) => void;
+  onCloseRemoteStream: () => void;
+  wsUrl: string;
+  roomId: string;
+  clientId: string;
 }
 
 export interface P2PSimpleState {
   isNegotiating: boolean;
-  wsUrl: string;
   ws: WebSocket | null;
   peer: RTCPeerConnection | null;
-  localStream: MediaStream | null;
-  roomId: string;
-  clientId: string,
 }
 
 const initialState: P2PSimpleState = {
   isNegotiating: false,
-  wsUrl: 'ws://localhost:3000/ws',
   ws: null,
   peer: null,
-  localStream: null,
-  roomId: randomString(9),
-  clientId: randomString(17)
 };
 
 const iceServers = [{ urls: 'stun:stun.l.google.com:19302' }];
@@ -30,67 +28,35 @@ const peerConnectionConfig = {
   iceServers,
 };
 
-class P2PSimple extends React.Component<P2PSimpleProps, P2PSimpleState> {
-  state = initialState;
-  private localVideoRef = React.createRef<HTMLVideoElement>();
-  private remoteVideoRef = React.createRef<HTMLVideoElement>();
+class P2PNegotiator extends React.Component<P2PSimpleProps, P2PSimpleState> {
+  public state = initialState;
 
   constructor(props: P2PSimpleProps) {
     super(props);
-    this.localVideoRef = React.createRef();
-    this.remoteVideoRef = React.createRef();
   }
 
   public render() {
     return (
-      <Main>
-      <Title>
-      <h2>{this.props.title}</h2>
-      </Title>
-      <Inputs>
-      <Input>
-      <label htmlFor='url'>シグナリングサーバのURL:</label>
-      <input className='input' type='text' id='url' onChange={this.onChangeWsUrl.bind(this)} value={this.state.wsUrl} />
-      </Input>
-      <Input>
-      <label htmlFor='roomId'>部屋のID:</label>
-      <input
-        className='input'
-        type='text'
-        id='roomId'
-        onChange={this.onChangeRoomId.bind(this)}
-        value={this.state.roomId}
-      />
-      </Input>
-      </Inputs>
-      <Buttons>
-      <Button onClick={this.connect.bind(this)} type='button'>接続</Button>
-      <Button onClick={this.disconnect.bind(this)} type='button' >切断</Button>
-      </Buttons>
-      <Videos>
-      <RemoteVideo ref={this.remoteVideoRef} autoPlay />
-      <LocalVideo ref={this.localVideoRef} autoPlay muted />
-      </Videos>
-      </Main>
+      <div>
+        <Buttons>
+          <Button onClick={this.connect.bind(this)} type='button'>接続</Button>
+          <Button onClick={this.disconnect.bind(this)} type='button' >切断</Button>
+        </Buttons>
+      </div>
     );
-  }
-
-  public componentDidMount() {
-    // ローカルビデオを再生する
-    this.startLocalVideo();
   }
 
   public connect() {
     this.setState({isNegotiating: false});
   // 新規に websocket を作成
-    const ws = new WebSocket(this.state.wsUrl);
+    const ws = new WebSocket(this.props.wsUrl);
     // ws のコールバックを定義する
     ws.onopen = () => {
       console.log('ws open()');
       ws.send(JSON.stringify({
         type: 'register',
-        client_id: this.state.clientId,
-        room_id: this.state.roomId,
+        client_id: this.props.clientId,
+        room_id: this.props.roomId,
       }));
       ws.onmessage = (event: MessageEvent) => {
         console.log('ws onmessage() data:', event.data);
@@ -156,31 +122,13 @@ class P2PSimple extends React.Component<P2PSimpleProps, P2PSimpleState> {
       if (this.state.ws && this.state.ws.readyState < 2) {
         this.state.ws.close();
       }
-      this.setState({peer: null, ws: null});
     }
-    if (this.remoteVideoRef.current) {
-      this.remoteVideoRef.current.srcObject = null;
-    }
-  }
-
-
-  private async startLocalVideo() {
-    if (this.localVideoRef.current) {
-      try {
-        const localStream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
-        this.setState({localStream});
-        this.localVideoRef.current.srcObject = localStream;
-      } catch (error) {
-        console.error('mediaDevice.getUserMedia() error:', error);
-      }
-    }
+    this.setState({peer: null, ws: null});
+    this.props.onCloseRemoteStream();
   }
 
   private startRemoteVideo(remoteStream: MediaStream) {
-    if (this.remoteVideoRef.current) {
-      this.remoteVideoRef.current.srcObject = remoteStream;
-      console.log('play remote video');
-    }
+    this.props.onStartRemoteStream(remoteStream);
   }
 
   private prepareNewConnection(isOffer: boolean) {
@@ -192,6 +140,7 @@ class P2PSimple extends React.Component<P2PSimpleProps, P2PSimpleState> {
         console.log('-- peer.ontrack()', event);
         const mediaStream = new MediaStream(tracks);
         this.startRemoteVideo(mediaStream);
+
       };
     } else {
       // @ts-ignore
@@ -262,14 +211,14 @@ class P2PSimple extends React.Component<P2PSimpleProps, P2PSimpleState> {
       console.log('signaling state changes:', peer.signalingState);
     };
 
-    if (this.state.localStream) {
-      const videoTrack = this.state.localStream.getVideoTracks()[0];
-      const audioTrack = this.state.localStream.getAudioTracks()[0];
+    if (this.props.localStream) {
+      const videoTrack = this.props.localStream.getVideoTracks()[0];
+      const audioTrack = this.props.localStream.getAudioTracks()[0];
       if (videoTrack) {
-          peer.addTrack(videoTrack, this.state.localStream);
+          peer.addTrack(videoTrack, this.props.localStream);
         }
       if (audioTrack) {
-          peer.addTrack(audioTrack, this.state.localStream);
+          peer.addTrack(audioTrack, this.props.localStream);
         }
     } else {
       console.warn('no local stream, but continue.');
@@ -325,14 +274,6 @@ class P2PSimple extends React.Component<P2PSimpleProps, P2PSimpleState> {
     }
   }
 
-  private onChangeWsUrl(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({wsUrl: event.target.value});
-  }
-
-  private onChangeRoomId(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({roomId: event.target.value});
-  }
-
   private addIceCandidate(candidate: RTCIceCandidate) {
     console.log('add ice candidate', candidate);
     if (this.state.peer) {
@@ -341,10 +282,88 @@ class P2PSimple extends React.Component<P2PSimpleProps, P2PSimpleState> {
       console.error('PeerConnection does not exist!');
     }
   }
-
 }
 
-export default P2PSimple;
+export default function P2PSimple() {
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+  const [roomId, setRoomId] = useState<string>(randomString(9));
+  const clientId = randomString(17);
+  const [wsUrl, setWsUrl] = useState<string>('ws://localhost:3000/ws');
+  const onChangeWsUrl = (e: React.ChangeEvent<HTMLInputElement>) => setWsUrl(e.target.value);
+  const onChangeRoomId = (e: React.ChangeEvent<HTMLInputElement>) => setRoomId(e.target.value);
+  const onCloseRemoteStream = useCallback(() => setRemoteStream(null), []);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        });
+        setLocalStream(stream);
+      } catch (error) {
+        console.error('mediaDevice.getUserMedia() error:', error);
+      }
+    })();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = localStream;
+    }
+  }, [localStream]);
+
+  useLayoutEffect(() => {
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = remoteStream;
+    }
+  }, [remoteStream]);
+
+  return (
+    <Main>
+      <Title>
+        <h2>Ayame React Sample</h2>
+      </Title>
+      <Inputs>
+        <Input>
+          <label htmlFor='url'>シグナリングサーバのURL:</label>
+          <input
+            className='input'
+            type='text'
+            id='url'
+            onChange={onChangeWsUrl}
+            value={wsUrl}
+            />
+        </Input>
+        <Input>
+          <label htmlFor='roomId'>部屋のID:</label>
+          <input
+            className='input'
+            type='text'
+            id='roomId'
+            onChange={onChangeRoomId}
+            value={roomId}
+          />
+        </Input>
+      </Inputs>
+      <P2PNegotiator
+        wsUrl={wsUrl}
+        roomId={roomId}
+        clientId={clientId}
+        localStream={localStream}
+        onStartRemoteStream={setRemoteStream}
+        onCloseRemoteStream={onCloseRemoteStream}
+      />
+      <Videos>
+        <RemoteVideo ref={remoteVideoRef} autoPlay />
+        <LocalVideo ref={localVideoRef} autoPlay muted />
+      </Videos>
+    </Main>
+  );
+}
 
 const Main = styled.div`
   text-align: center;
