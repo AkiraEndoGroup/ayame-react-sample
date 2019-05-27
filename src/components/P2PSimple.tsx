@@ -62,6 +62,13 @@ class P2PNegotiator extends React.Component<P2PSimpleProps, P2PSimpleState> {
         console.log('ws onmessage() data:', event.data);
         const message = JSON.parse(event.data);
         switch (message.type) {
+          case 'ping': {
+            console.log('Received ping, send pong.');
+            ws.send(JSON.stringify({
+              type: 'pong',
+            }));
+            break;
+          }
           case 'accept': {
             console.log('Received accept ...');
             if (!this.state.peer) {
