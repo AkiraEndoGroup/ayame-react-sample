@@ -55,8 +55,8 @@ class P2PNegotiator extends React.Component<P2PSimpleProps, P2PSimpleState> {
       console.log('ws open()');
       ws.send(JSON.stringify({
         type: 'register',
-        client_id: this.props.clientId,
-        room_id: this.props.roomId,
+        clientId: this.props.clientId,
+        roomId: this.props.roomId,
       }));
       ws.onmessage = (event: MessageEvent) => {
         console.log('ws onmessage() data:', event.data);
