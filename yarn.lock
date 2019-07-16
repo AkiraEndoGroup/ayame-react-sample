@@ -530,6 +530,10 @@ atob@^2.1.1:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
+"ayame-web-sdk@git+https://github.com/OpenAyame/ayame-web-sdk#5bb2dec":
+  version "0.0.1-rc2"
+  resolved "git+https://github.com/OpenAyame/ayame-web-sdk#5bb2dec11d6aa2c1c292e9cd55d4cc30ce24f3f5"
+
 "babel-plugin-styled-components@>= 1":
   version "1.10.6"
   resolved "https://registry.yarnpkg.com/babel-plugin-styled-components/-/babel-plugin-styled-components-1.10.6.tgz#f8782953751115faf09a9f92431436912c34006b"
