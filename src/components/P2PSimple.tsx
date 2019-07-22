@@ -2,7 +2,7 @@ import React, { useState, useRef, useLayoutEffect, useEffect, useCallback } from
 import styled from 'styled-components';
 import { randomString } from '../utils';
 // @ts-ignore
-import { connection as AyameConnection } from 'ayame-web-sdk';
+import { connection as AyameConnection } from '@open-ayame/ayame-web-sdk';
 
 export interface P2PSimpleProps {
   onStartRemoteStream: (stream: MediaStream) => void;
