@@ -6,7 +6,7 @@ import { connection as AyameConnection, defaultOptions } from '@open-ayame/ayame
 
 export interface P2PSimpleProps {
   onStartRemoteStream: (stream: MediaStream) => void;
-  setLocalStream: (stream: MediaStream) => void;
+  setLocalStream: (stream: MediaStream | null) => void;
   onCloseRemoteStream: () => void;
   wsUrl: string;
   roomId: string;
