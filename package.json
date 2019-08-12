@@ -19,7 +19,7 @@
     "react-dom": "^16.8.6",
     "styled-components": "^4.3.2",
     "typescript": "^3.5.3",
-    "@open-ayame/ayame-web-sdk": "^19.7.1"
+    "@open-ayame/ayame-web-sdk": "^19.8.0"
   },
   "devDependencies": {
     "@types/react": "^16.8.23",
