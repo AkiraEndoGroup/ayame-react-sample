@@ -13,8 +13,8 @@ return {
     entry: {
       main: [
         path.resolve(__dirname, "src/index.tsx"),
-        'webpack-plugin-serve/client'
-      ]
+        isProduction ? null : 'webpack-plugin-serve/client'
+      ].filter(Boolean)
     },
     output: {
       filename: isProduction ? "bundle.[hash].js" : "[name].js",
