@@ -1,5 +1,7 @@
 # Ayame React サンプル
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 このサンプルは [WebRTC Signaling Server Ayame](https://github.com/shiguredo/ayame) で利用可能な React を利用したサンプルです。
 
 ## 目的
@@ -42,7 +44,7 @@ $ yarn  serve
 Apache License 2.0
 
 ```
-Copyright 2019, Shiguredo Inc, kdxu
+Copyright 2019, Shiguredo Inc. and Kyoko Kadowaki (kdxu)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -56,3 +58,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
