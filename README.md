@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-このサンプルは [WebRTC Signaling Server Ayame](https://github.com/shiguredo/ayame) で利用可能な React を利用したサンプルです。
+このサンプルは [WebRTC Signaling Server Ayame](https://github.com/OpenAyame/ayame) で利用可能な React を利用したサンプルです。
 
 ## 目的
 
@@ -10,7 +10,7 @@ React と WebRTC API を組み合わせる時の一つの例として公開し�
 
 ## 動かし方
 
-[Ayame Server](https://github.com/shiguredo/ayame) をクローンし、USE.md を参考に起動しておきます。
+[Ayame Server](https://github.com/OpenAyame/ayame) をクローンし、USE.md を参考に起動しておきます。
 
 このリポジトリをクローンし、
 
