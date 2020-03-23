@@ -60,3 +60,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
+
+## 開発について
+
+Ayame React サンプルはオープンソースソフトウェアですが、開発についてはオープンではありません。
+そのためコメントやプルリクエストを頂いてもすぐには採用はしません。
+
+まずは Discord にてご連絡ください。
+
+## Discord
+
+アドバイスはしますが、サポートはしません。
+
+https://discord.gg/mDesh2E
