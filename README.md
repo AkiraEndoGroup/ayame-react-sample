@@ -4,6 +4,10 @@
 
 このサンプルは [WebRTC Signaling Server Ayame](https://github.com/OpenAyame/ayame) で利用可能な React を利用したサンプルです。
 
+## 時雨堂のオープンソースソフトウェアについて
+
+利用前に https://github.com/shiguredo/oss をお読みください。
+
 ## 目的
 
 React と WebRTC API を組み合わせる時の一つの例として公開しています。
@@ -59,17 +63,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-
-
-## 開発について
-
-Ayame React サンプルはオープンソースソフトウェアですが、開発についてはオープンではありません。
-そのためコメントやプルリクエストを頂いてもすぐには採用はしません。
-
-まずは Discord にてご連絡ください。
-
-## Discord
-
-アドバイスはしますが、サポートはしません。
-
-https://discord.gg/mDesh2E
